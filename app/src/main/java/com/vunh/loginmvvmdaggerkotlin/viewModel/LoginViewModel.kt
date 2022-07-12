@@ -4,11 +4,13 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.vunh.loginmvvmdaggerkotlin.model.Account
 import com.vunh.loginmvvmdaggerkotlin.repository.login.LoginRepositoryImpl
 import com.vunh.loginmvvmdaggerkotlin.usecase.UseCaseResult
+import com.vunh.loginmvvmdaggerkotlin.users.UserManager
 import com.vunh.loginmvvmdaggerkotlin.utils.AppUtils.validateEmail
 import kotlinx.coroutines.*
 import retrofit2.Call
@@ -18,7 +20,8 @@ import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
 class LoginViewModel(
-    private val loginRepositoryImp: LoginRepositoryImpl
+    private val loginRepositoryImp: LoginRepositoryImpl,
+    private val userManager: UserManager,
     ) : ViewModel() , CoroutineScope {
     private val job = Job()
     override val coroutineContext: CoroutineContext = Dispatchers.Main + job
@@ -35,18 +38,23 @@ class LoginViewModel(
     fun getUser(username: String, password: String){
         showLoading.value = true
         launch {
-            var result = withContext(Dispatchers.IO){
-                loginRepositoryImp.getUser(username, password)
-            }
-            showLoading.value= false
-            when (result) {
-                is UseCaseResult.Success -> {
-                    userResult.value = result.data
+            try {
+                var result = withContext(Dispatchers.IO) {
+                    loginRepositoryImp.getUser(username, password)
                 }
-                is UseCaseResult.Error -> {
-                    showError.value = result.errorMessage
+                showLoading.value = false
+                when (result) {
+                    is UseCaseResult.Success -> {
+                        userManager.saveUser(username, password)
+                        userResult.value = result.data
+                    }
+                    is UseCaseResult.Error -> {
+                        showError.value = result.errorMessage
 
+                    }
                 }
+            }catch (e: Exception) {
+                showError.value = e.toString()
             }
         }
     }

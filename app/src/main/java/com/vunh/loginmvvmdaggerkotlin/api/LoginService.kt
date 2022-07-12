@@ -11,28 +11,10 @@ import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
 
 interface LoginService {
-
     @FormUrlEncoded
     @POST("pda/account/login")
     fun callLoginAsync(
         @Field("username") username: String,
         @Field("password") password: String,
     ): Deferred<Account>
-
-//    companion object {
-//        var loginService: LoginService? = null
-//
-//        fun getInstance() : LoginService {
-//            if (loginService == null) {
-//                val retrofit = Retrofit.Builder()
-//                    .baseUrl(AppUtils.BASE_URL)
-//                    .addConverterFactory(GsonConverterFactory.create())
-//                    .addCallAdapterFactory(CoroutineCallAdapterFactory())
-//                    .build()
-//
-//                loginService = retrofit.create(LoginService::class.java)
-//            }
-//            return loginService!!
-//        }
-//    }
 }

@@ -9,10 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.vunh.loginmvvmdaggerkotlin.BaseApp
-import com.vunh.loginmvvmdaggerkotlin.MainActivity
-import com.vunh.loginmvvmdaggerkotlin.api.LoginService
 import com.vunh.loginmvvmdaggerkotlin.databinding.ActivityLoginBinding
-import com.vunh.loginmvvmdaggerkotlin.repository.login.LoginRepositoryImpl
 import com.vunh.loginmvvmdaggerkotlin.utils.AppUtils.afterTextChanged
 import com.vunh.loginmvvmdaggerkotlin.utils.AppUtils.isEnable
 import com.vunh.loginmvvmdaggerkotlin.utils.AppUtils.validateEmail
@@ -57,6 +54,7 @@ class LoginActivity : AppCompatActivity() {
             binding.lblEmailAnswer.text = it.username
             Snackbar.make(binding.root, "Success", Snackbar.LENGTH_LONG).show()
             startActivity(newTaskIntent(this@LoginActivity))
+            finish()
         })
         viewModel.showLoading.observe(this, Observer {
             if (it) binding.progressLoading.visibility =
